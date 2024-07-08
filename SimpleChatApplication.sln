@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleChatApplication.BLL",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleChatApplication.XUnitTest", "SimpleChatApplication.XUnitTest\SimpleChatApplication.XUnitTest.csproj", "{B4BB9ED3-94B8-406E-B099-7CACC332DF77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleChatApplication.XIntegTest", "SimpleChatApplication.xIntegTests\SimpleChatApplication.XIntegTest.csproj", "{21400D3B-3B9B-49C5-9826-C650AAE45AC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B4BB9ED3-94B8-406E-B099-7CACC332DF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4BB9ED3-94B8-406E-B099-7CACC332DF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4BB9ED3-94B8-406E-B099-7CACC332DF77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21400D3B-3B9B-49C5-9826-C650AAE45AC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21400D3B-3B9B-49C5-9826-C650AAE45AC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21400D3B-3B9B-49C5-9826-C650AAE45AC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21400D3B-3B9B-49C5-9826-C650AAE45AC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

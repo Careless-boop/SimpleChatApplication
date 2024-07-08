@@ -17,8 +17,8 @@ namespace SimpleChatApplication.WebApi.Controllers
             _chatService = chatService;
         }
 
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> CreateChat([FromBody] ChatDTO chat, int userId)
+        [HttpPost]
+        public async Task<IActionResult> CreateChat([FromBody] ChatDTO chat)
         {
             try
             {
