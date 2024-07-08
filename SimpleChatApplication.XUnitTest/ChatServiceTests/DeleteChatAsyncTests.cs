@@ -8,35 +8,39 @@ namespace SimpleChatApplication.XUnitTest.ChatServiceTests
 {
     public class DeleteChatAsyncTests
     {
+        private SimpleChatAppDbContext CreateDbContext()
+        {
+            var options = new DbContextOptionsBuilder<SimpleChatAppDbContext>()
+                .UseInMemoryDatabase("TestDB")
+                .Options;
+
+            var dbContext = new SimpleChatAppDbContext(options);
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+            return dbContext;
+        }
+
         [Fact]
         public async Task DeleteChatAsync_ShouldReturnChatDTO_WhenArgumentsValid()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<SimpleChatAppDbContext>()
-            .UseInMemoryDatabase(databaseName: "ChatAppDB")
-            .Options;
-
-            using (var context = new SimpleChatAppDbContext(options))
+            ChatDTO result;
+            using (var dbContext = CreateDbContext())
             {
-                context.Users.Add(new User
+                dbContext.Users.Add(new User
                 {
                     Id = 1,
                     Username = "Test"
                 });
-                context.Chats.Add(new Chat
+                dbContext.Chats.Add(new Chat
                 {
                     Id = 1,
                     Name = "TestChat",
                     CreatedByUserId = 1
                 });
-                await context.SaveChangesAsync();
-            }
+                await dbContext.SaveChangesAsync();
 
-            //Act
-            ChatDTO result;
-            using (var context = new SimpleChatAppDbContext(options))
-            {
-                result = await new ChatService(context).DeleteChatAsync(1, 1);
+                result = await new ChatService(dbContext).DeleteChatAsync(1, 1);
             }
 
             // Assert
@@ -45,37 +49,59 @@ namespace SimpleChatApplication.XUnitTest.ChatServiceTests
             Assert.Equal("TestChat", result.Name);
             Assert.Equal(1, result.CreatedByUserId);
         }
-        public async Task DeleteChatAsync_ShouldThrowException_WhenArgumentsChatMissing()
+
+        [Fact]
+        public async Task DeleteChatAsync_ShouldThrowException_WhenChatNotFound()
         {
             // Arrange
-            var options = new DbContextOptionsBuilder<SimpleChatAppDbContext>()
-            .UseInMemoryDatabase(databaseName: "ChatAppDB")
-            .Options;
-
-            using (var context = new SimpleChatAppDbContext(options))
+            using (var dbContext = CreateDbContext())
             {
-                context.Users.Add(new User
+                dbContext.Users.Add(new User
                 {
                     Id = 1,
                     Username = "Test"
                 });
-                context.Chats.Add(new Chat
+                dbContext.Chats.Add(new Chat
                 {
                     Id = 2,
                     Name = "TestChat",
                     CreatedByUserId = 2
                 });
-                await context.SaveChangesAsync();
-            }
+                await dbContext.SaveChangesAsync();
 
-            //Act
-            ChatDTO result;
-            using (var context = new SimpleChatAppDbContext(options))
+
+                // Act & Assert
+                await Assert.ThrowsAsync<KeyNotFoundException>(async () => await new ChatService(dbContext).DeleteChatAsync(1, 1));
+            }
+        }
+
+        [Fact]
+        public async Task DeleteChatAsync_ShouldThrowException_WhenUserUnauthorized()
+        {
+            // Arrange
+            using (var dbContext = CreateDbContext())
             {
-                //Assert
-                Assert.ThrowsAsync<KeyNotFoundException>(x => new ChatService(context).DeleteChatAsync(1, 1));
+                dbContext.Users.Add(new User
+                {
+                    Id = 1,
+                    Username = "Test"
+                });
+                dbContext.Users.Add(new User
+                {
+                    Id = 2,
+                    Username = "OtherUser"
+                });
+                dbContext.Chats.Add(new Chat
+                {
+                    Id = 1,
+                    Name = "TestChat",
+                    CreatedByUserId = 2
+                });
+                await dbContext.SaveChangesAsync();
+
+                // Act & Assert
+                await Assert.ThrowsAsync<UnauthorizedAccessException>(async () => await new ChatService(dbContext).DeleteChatAsync(1, 1));
             }
         }
     }
-
 }
